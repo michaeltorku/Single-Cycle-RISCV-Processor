@@ -1,0 +1,81 @@
+#SETUP - do not delete
+
+lui t0, 0x12345
+addi t0, t0, 0x678
+sw t0, 0(x0)
+
+lui t0, 0x13f44
+addi t0, t0, 0x64c
+sw t0, 4(x0)
+
+
+#TODO 1
+#reverse word at memaddr 0 with bitmasks, store in t0
+
+#loading bitmasks into registers
+lw t0, 0(x0)
+lui x30, 0xff000
+and x20, x30, x5
+lui x30, 0x00ff0
+and x21, x30, x5
+lui x30, 0x00010
+addi x30, x30, 0xf00
+and x22, x30, x5
+lui x30, 0x00000
+addi x30, x30, 0x0ff
+and x23, x30, x5
+
+#Putting shift amounts (Sa bits) into registers and shifting register values
+addi x30, x0, 24
+srl x20, x20,  x30
+
+addi x30, x0, 8
+srl x21, x21,  x30
+
+addi x30, x0, 8
+sll x22, x22,  x30
+
+addi x30, x0, 24
+sll x23, x23,  x30
+
+#Combining values
+add x19, x23, x22
+add x19, x19, x21
+add x19, x19, x20
+
+#Storing values into memory
+sw x19, 0(x0)
+lw t0, 0(x0)
+
+
+#TODO 2
+#reverse word at memaddr 4 with lb/sb, store in t1
+
+#load the different bytes into different registers
+lb x23, 4(x0)
+lb x24, 5(x0)
+lb x25, 6(x0)
+lb x26, 7(x0) 
+sb x26, 4(x0)
+
+#Putting shift amounts (Sa bits) into registers and shifting register values
+addi x27, x0, 8 
+sll x25, x25, x27
+
+addi x27, x0, 16 
+sll x24, x24, x27
+
+addi x27, x0, 24 
+sll x23, x23, x27
+
+#
+sb x25, 5(x0)
+sb x24, 6(x0)
+sb x23, 7(x0)
+lw t1, 4(x0)
+
+
+#TODO 3
+#xor both reversed words, store in t2
+xor t2, t0, t1 
+
