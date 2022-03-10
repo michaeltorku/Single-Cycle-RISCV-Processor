@@ -1,0 +1,198 @@
+## desc = tests for R,I,S,U types
+## cycles = 30
+## expect[0] = 0x00000000
+## expect[1] = 0x0000051b
+## expect[2] = 0xfffff800
+## expect[3] = 0x00000001
+## expect[4] = 0x00000000
+## expect[5] = 0x000004aa
+## expect[6] = 0xfffff800
+## expect[7] = 0x00000000
+## expect[8] = 0x00000000
+## expect[9] = 0x00000001
+## expect[10] = 0xfffff801
+## expect[11] = 0xfffff800
+## expect[12] = 0xfffff59d
+## expect[13] = 0x00000000
+## expect[14] = 0xffffff31
+## expect[15] = 0x00000731
+## expect[16] = 0x00000274
+## expect[17] = 0xfffff8cf
+## expect[18] = 0x2c599000
+## expect[19] = 0xfffffadc
+## expect[20] = 0x00000000
+## expect[21] = 0x00000000
+## expect[22] = 0xfffff59d
+## expect[23] = 0x00000000
+## expect[24] = 0x00000000
+## expect[25] = 0x00000000
+## expect[26] = 0xfffff800
+## expect[27] = 0x000001c5
+## expect[28] = 0x00000000
+## expect[29] = 0xffffff31
+## expect[30] = 0x00000000
+## expect[31] = 0x00000000
+
+#ADDI edge cases
+addi x1, x1, 2047 #largest positive imm
+addi x2, x2, -2048 #largest negative imm
+addi x3, x2, 0 #add 0 
+addi x4, x1, 123 #add imm + value of different register
+
+#ANDI edge cases
+andi x5, x5, 2047 #largest positive imm
+andi x6, x6, -2048 #largest negative imm 
+andi x7, x7, 0 #0 immediate
+andi x2, x3, 120 #different registers
+
+#ORI edge cases 
+ori x8, x8, 2047 #largest positive imm
+ori x9, x9, -2048 #largest negative imm 
+ori x10, x10, 0 #0 immediate
+ori x4, x1, 123 #different registers
+
+#XORI edge cases
+xori x11, x11, 2047 #largest positive imm
+xori x12, x12, -2048 #largest negative imm 
+xori x13, x13, 0 #0 immediate
+xori x2, x2, 120 #different registers
+
+#SLTI edge cases
+slti x14, x1, -2048
+slti x15, x2, 2047
+slti x16, x21, 0
+
+#LUI edge cases
+lui x17, -1
+
+#SW, LW
+sw x31, 4(x2) #Loading to address with element
+lw x31, 4(x2)
+sw x12, 4(x2)
+lw x11, 4(x2)
+sw x31, 8(x2) # Swapping register elements
+sw x30, 12(x2)
+lw x31, 12(x2)
+lw x30, 8(x2)
+lui x26, 0x3FFFF
+addi x26, x26, 0xF000 #store max address
+lw x23, 0(x26) #test max 
+sw x24, 0(x26) #test max
+addi x27, x26, 0xF0000 #above max address 
+lw x28, 0(x26) #test over max 
+sw x24, 0(x26) #test over max
+
+#SB, LB
+sb x18, 12(x2) # Storing byte 2
+lw x1, 12(x2)
+sw x6, 20(x2) # Storing bytes 3, 1, and 0
+sb x19, 23(x2)
+sb x20, 21(x2)
+sb x21, 20(x2)
+lw x22, 20(x2)
+lb x29, 2(x2) #test max 
+sb x24, 10(x2) #test max
+lb x20, 23(x2) #test over max 
+sb x24, 4(x2) #test over max
+
+#ADD
+add x22, x4, x5 #use largest pos (2047)
+add x12, x8, x3 #use largest negative 
+add x1, x1, x1 #use same registers 
+add x2, x1, x0 #add 0 
+
+#SUB
+sub x22, x8, x5 #use largest pos (2047)
+sub x29, x9, x3 #use largest negative 
+sub x1, x1, x1 #use same registers 
+sub x31, x1, x0 #add 0 
+
+#COMPARISON
+xor x19, x2, x2 #with non-zero
+xor x21, x13, x0 #with 0 
+and x23, x3, x13 #with non-zero
+and x21, x3, x0 #with 0 
+or x20, x4, x1 #with non-zero
+or x12, x5, x0 #with 0 
+
+#SLT
+slt x11, x17, x0 #x2 <x0
+slt x12, x0, x17 #x0 <x2
+slt x13, x17, x17 #negatives 
+slt x14, x0, x0 #zeroes
+
+#SLL, SRA
+sll x12, x4, x2 #shift by non zero 
+sll x22, x5, x0 #shift by 0 
+sll x27, x0, x5 #shift 0
+sra x13, x0, x6 #shift 0
+sra x18, x6, x0 #shift by 0 
+sra x25, x5, x4 #shift by non zero 
+
+#random test cases
+addi x22, x31, 0xb7f
+and x2, x14, x9
+sll x1, x10, x31
+ori x29, x12, 0xf31
+and x19, x25, x31
+slti x4, x17, 5
+and x14, x3, x12
+ori x19, x4, 0xaf3
+or x6, x9, x6
+addi x12, x11, 0x42
+and x19, x16, x6
+lui x14, 0x72c0e
+andi x22, x27, 0x266
+ori x5, x13, 0x4ef
+ori x27, x13, 0x1c5
+sub x12, x11, x22
+ori x6, x24, 0xdb9
+slt x2, x7, x13
+or x2, x17, x3
+andi x12, x21, 0x39d
+or x30, x13, x20
+slt x19, x15, x1
+sub x16, x0, x13
+add x12, x5, x11
+slti x6, x12, 0x7e41
+or x22, x1, x29
+add x8, x5, x12
+and x22, x13, x22
+sll x12, x11, x1
+slt x18, x28, x11
+addi x3, x17, 0x59d
+andi x12, x1, 0xb5c
+slt x9, x17, x22
+slti x14, x10, 0x51d
+andi x10, x1, 0x6b4
+sub x8, x22, x18
+and x17, x23, x12
+or x6, x28, x2
+add x12, x21, x31
+andi x4, x8, 0x410
+slti x17, x6, 0xdde
+lui x26, 0x32d7d
+xor x31, x29, x31
+lui x18, 0x2c599
+ori x4, x22, 0x39f
+addi x19, x3, 0x53f
+sub x17, x2, x31
+ori x15, x7, 0x4aa
+and x26, x31, x2
+sll x14, x15, x4
+xori x16, x5, 0x69b
+and x4, x7, x27
+add x22, x1, x12
+xor x5, x15, x23
+slt x24, x21, x7
+add x10, x9, x2
+addi x23, x4, 0xd4d
+or x1, x12, x1
+sub x14, x29, x21
+sll x22, x3, x11
+sra x23, x15, x17
+or x12, x3, x24
+xor x15, x6, x31
+slti x3, x2, 0xe30
+addi x1, x15, 0xdea
+and x31, x22, x25
