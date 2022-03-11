@@ -45,6 +45,8 @@ add x19, x19, x20
 
 #Storing values into memory
 sw x19, 0(x0)
+
+#putting word into t0
 lw t0, 0(x0)
 
 
@@ -68,7 +70,7 @@ sll x24, x24, x27
 addi x27, x0, 24 
 sll x23, x23, x27
 
-#
+#Load the bytes into memory and then into t0
 sb x25, 5(x0)
 sb x24, 6(x0)
 sb x23, 7(x0)
